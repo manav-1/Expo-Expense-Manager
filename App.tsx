@@ -10,6 +10,7 @@ import {snackbar} from './src/state/snackbar';
 import 'expo-dev-client';
 import {BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
 import {TOP_BANNER_ID} from './src/state/store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const App = observer(() => {
   const [loaded, setLoaded] = React.useState(false);
@@ -37,6 +38,7 @@ const App = observer(() => {
         'SpaceGrotesk-Light': require('./assets/fonts/spaceGrotesk/SpaceGrotesk-Light.ttf'),
         'SpaceGrotesk-Regular': require('./assets/fonts/spaceGrotesk/SpaceGrotesk-Regular.ttf'),
       });
+      AppStore.updateTheme(await AsyncStorage.getItem('theme'));
       setLoaded(true);
     })();
   }, []);

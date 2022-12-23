@@ -123,7 +123,7 @@ const AppStore = types
     },
     setThemeType(themeType: string) {
       self.themeType = themeType;
-      this.setTheme(themeType === 'dark' ? themeLight : themeDark);
+      this.setTheme(themeType === 'dark' ? themeDark : themeLight);
     },
     setTheme(theme: any) {
       self.theme = theme;
@@ -454,181 +454,26 @@ const AppStore = types
     },
   }))
   .actions(self => ({
-    updateTheme: (theme: string) => self.setThemeType(theme),
+    async updateTheme(theme: string) {
+      await AsyncStorage.setItem('expense_theme', theme);
+      self.setThemeType(theme);
+    },
   }));
 
 export const App = AppStore.create({
   theme: themeLight,
   themeType: 'light',
-  expenses: [
-    {
-      expenseId: '4',
-      createdAt: '2022-12-20T15:16:16.501Z',
-      updatedAt: '2022-12-20T15:16:16.501Z',
-      accountId: '1',
-      account: {
-        debit: '200',
-        credit: '3700',
-        accountLabel: 'manav1',
-        userId: '1',
-        accountId: '1',
-      },
-      expenseType: 'Credit',
-      value: 1200,
-      date: '2022-12-11T18:30:00.000Z',
-      description: 'trial',
-      expenseWay: 'Bank Transfer',
-    },
-    {
-      expenseId: '3',
-      createdAt: '2022-12-20T15:12:48.861Z',
-      updatedAt: '2022-12-20T15:12:48.861Z',
-      accountId: '1',
-      account: {
-        debit: '200',
-        credit: '3700',
-        accountLabel: 'manav1',
-        userId: '1',
-        accountId: '1',
-      },
-      expenseType: 'Debit',
-      value: 200,
-      date: '2022-12-20T15:12:29.592Z',
-      description: 'Expense 20',
-      expenseWay: 'UPI',
-    },
-    {
-      expenseId: '2',
-      createdAt: '2022-12-20T15:12:15.401Z',
-      updatedAt: '2022-12-20T15:12:15.401Z',
-      accountId: '2',
-      account: {
-        debit: '100',
-        credit: '90000',
-        accountLabel: 'SBI Account',
-        userId: '1',
-        accountId: '2',
-      },
-      expenseType: 'Debit',
-      value: 100,
-      date: '2022-12-20T15:11:55.318Z',
-      description: 'Expense',
-      expenseWay: 'Bank Transfer',
-    },
-    {
-      expenseId: '1',
-      createdAt: '2022-12-20T15:01:11.379Z',
-      updatedAt: '2022-12-20T15:01:11.379Z',
-      accountId: '1',
-      account: {
-        debit: '200',
-        credit: '3700',
-        accountLabel: 'manav1',
-        userId: '1',
-        accountId: '1',
-      },
-      expenseType: 'Credit',
-      value: 2500,
-      date: '2022-12-19T18:30:00.000Z',
-      description: 'Expense 1',
-      expenseWay: 'Debit Card',
-    },
-  ],
-  notes: [
-    {
-      noteId: '1',
-      noteText: 'New Note',
-      date: '2022-12-20T18:30:00.000Z',
-      createdAt: '2022-12-20T15:48:35.578Z',
-      updatedAt: '2022-12-20T15:48:35.578Z',
-      userId: '1',
-    },
-  ],
-  accounts: [
-    {
-      accountId: '1',
-      userId: '1',
-      debit: '200',
-      credit: '3700',
-      accountLabel: 'manav1',
-      expenses: [
-        {
-          expenseId: '1',
-          createdAt: '2022-12-20T15:01:11.379Z',
-          updatedAt: '2022-12-20T15:01:11.379Z',
-          accountId: '1',
-          account: null,
-          expenseType: 'Credit',
-          value: 2500,
-          date: '2022-12-19T18:30:00.000Z',
-          description: 'Expense 1',
-          expenseWay: 'Debit Card',
-        },
-        {
-          expenseId: '3',
-          createdAt: '2022-12-20T15:12:48.861Z',
-          updatedAt: '2022-12-20T15:12:48.861Z',
-          accountId: '1',
-          account: null,
-          expenseType: 'Debit',
-          value: 200,
-          date: '2022-12-20T15:12:29.592Z',
-          description: 'Expense 20',
-          expenseWay: 'UPI',
-        },
-        {
-          expenseId: '4',
-          createdAt: '2022-12-20T15:16:16.501Z',
-          updatedAt: '2022-12-20T15:16:16.501Z',
-          accountId: '1',
-          account: null,
-          expenseType: 'Credit',
-          value: 1200,
-          date: '2022-12-11T18:30:00.000Z',
-          description: 'trial',
-          expenseWay: 'Bank Transfer',
-        },
-      ],
-    },
-    {
-      accountId: '2',
-      userId: '1',
-      debit: '100',
-      credit: '90000',
-      accountLabel: 'SBI Account',
-      expenses: [
-        {
-          expenseId: '2',
-          createdAt: '2022-12-20T15:12:15.401Z',
-          updatedAt: '2022-12-20T15:12:15.401Z',
-          accountId: '2',
-          account: null,
-          expenseType: 'Debit',
-          value: 100,
-          date: '2022-12-20T15:11:55.318Z',
-          description: 'Expense',
-          expenseWay: 'Bank Transfer',
-        },
-      ],
-    },
-  ],
-  user: {
-    userId: '1',
-    userName: 'manav1',
-    userEmail: 'manav81101@gmail.com',
-    userProfilePic: null,
-    createdAt: '2022-12-20T14:57:46.603Z',
-    updatedAt: '2022-12-20T14:57:46.603Z',
-    expenseTypes: ['Credit', 'Debit'],
-    expenseWays: ['Cash', 'Bank Transfer', 'UPI', 'Debit Card', 'Credit Card'],
-  },
+  expenses: [],
+  notes: [],
+  accounts: [],
+  user: {},
 });
 
 export default AppStore;
 
 export type {UserIF, ExpenseIF, NoteIF, AccountIF, ThemeIF};
 
-const TOP_BANNER_ID = 'ca-app-pub-3483658732327025/3423867009';
-const BOTTOM_BANNER_ID = 'ca-app-pub-3483658732327025/9033015392';
+const TOP_BANNER_ID = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+const BOTTOM_BANNER_ID = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
 
 export {TOP_BANNER_ID, BOTTOM_BANNER_ID};

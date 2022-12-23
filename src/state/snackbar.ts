@@ -1,7 +1,7 @@
 import {types} from 'mobx-state-tree';
 import {InterstitialAd} from 'react-native-google-mobile-ads';
 
-const INTERSTITIAL_AD_ID = 'ca-app-pub-3483658732327025/8677275257';
+const INTERSTITIAL_AD_ID = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
 
 const interstitial = InterstitialAd.createForAdRequest(INTERSTITIAL_AD_ID, {
   requestNonPersonalizedAdsOnly: true,
