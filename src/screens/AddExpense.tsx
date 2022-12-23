@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
+  Dimensions,
 } from 'react-native';
 import {observer} from 'mobx-react';
 import {SelectList} from 'react-native-dropdown-select-list';
@@ -16,13 +17,22 @@ import {App, ExpenseIF} from '../state/store';
 import {snackbar} from '../state/snackbar';
 
 const AddExpense = observer(
-  ({expanded, expenseVal}: {expanded: boolean; expenseVal: ExpenseIF}) => {
+  ({
+    expanded,
+    expenseVal,
+    setExpanded,
+  }: {
+    expanded: boolean;
+    expenseVal: ExpenseIF;
+    setExpanded: (val: boolean) => void;
+  }) => {
     const height = React.useRef(new Animated.Value(0)).current;
+    const {height: HEIGHT} = Dimensions.get('window');
     React.useEffect(() => {
       if (expanded) {
         Animated.timing(height, {
           duration: 600,
-          toValue: 425,
+          toValue: HEIGHT - 120,
           easing: Easing.bounce,
         }).start();
       } else {
@@ -67,28 +77,29 @@ const AddExpense = observer(
           if (expenseVal.expenseId)
             await App.updateExpense(expense, expenseVal.expenseId);
           else await App.addExpense(expense);
+          setExpanded(false);
         })
         .catch(err => snackbar.openSnackBar(err.errors.join(',')));
     };
 
     const styles = StyleSheet.create({
       addExpenseContainer: {
-        backgroundColor: App.theme.accent,
+        backgroundColor: App.theme.secondary,
         paddingHorizontal: 10,
         borderRadius: 5,
         justifyContent: 'space-around',
         // @ts-ignore
-        height: height,
+        maxHeight: height,
         overflow: 'hidden',
       },
       expensesInput: {
         borderWidth: 1,
-        borderColor: App.theme.secondary,
+        borderColor: App.theme.primary,
         borderRadius: 5,
         paddingLeft: 20,
         height: 50,
         fontSize: 14,
-        color: App.theme.secondary,
+        color: App.theme.primary,
         fontFamily: App.theme.primaryFont.MEDIUM,
         marginVertical: 5,
       },
@@ -102,14 +113,14 @@ const AddExpense = observer(
         color: App.theme.primary,
       },
       expenseButton: {
-        backgroundColor: App.theme.secondary + 'dd',
+        backgroundColor: App.theme.primary,
         paddingVertical: 10,
         paddingHorizontal: 40,
         borderRadius: 5,
       },
       expensesButtonText: {
         fontFamily: App.theme.primaryFont.MEDIUM,
-        color: App.theme.primary,
+        color: App.theme.secondary,
         textAlign: 'center',
       },
       heading: {
@@ -120,7 +131,7 @@ const AddExpense = observer(
         borderRadius: 5,
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: App.theme.secondary,
+        borderColor: App.theme.primary,
         marginVertical: 5,
       },
       inputStyles: {
@@ -130,12 +141,12 @@ const AddExpense = observer(
       dateStyles: {
         fontSize: 14,
         fontFamily: App.theme.primaryFont.MEDIUM,
-        color: App.theme.secondary,
+        color: App.theme.primary,
       },
       addExpHeading: {
         fontFamily: App.theme.primaryFont.MEDIUM,
         fontSize: 25,
-        color: App.theme.secondary,
+        color: App.theme.primary,
       },
       addExpContainer: {
         flexDirection: 'row',
@@ -153,6 +164,9 @@ const AddExpense = observer(
         weekDaysColor: App.theme.accent,
         dateTextColor: App.theme.secondary,
       },
+      inputTextStyles: {color: App.theme.primary},
+      dropDownTextStyles: {color: App.theme.secondary},
+      dropDownStyles: {backgroundColor: App.theme.primary},
     });
     return (
       <Animated.View style={styles.addExpenseContainer}>
@@ -169,6 +183,7 @@ const AddExpense = observer(
           style={styles.expensesInput}
           multiline
           placeholder="Description"
+          placeholderTextColor={App.theme.primary + '99'}
           value={expense.description}
           onChangeText={value => setExpense({...expense, description: value})}
         />
@@ -198,7 +213,9 @@ const AddExpense = observer(
           fontFamily={App.theme.primaryFont.MEDIUM}
           boxStyles={styles.boxStyles}
           search={false}
-          inputStyles={styles.inputStyles}
+          inputStyles={styles.inputTextStyles}
+          dropdownTextStyles={styles.dropDownTextStyles}
+          dropdownStyles={styles.dropDownStyles}
           setSelected={(value: string) =>
             setExpense({...expense, expenseType: value})
           }
@@ -214,7 +231,9 @@ const AddExpense = observer(
           fontFamily={App.theme.primaryFont.MEDIUM}
           boxStyles={styles.boxStyles}
           search={false}
-          inputStyles={styles.inputStyles}
+          inputStyles={styles.inputTextStyles}
+          dropdownTextStyles={styles.dropDownTextStyles}
+          dropdownStyles={styles.dropDownStyles}
           setSelected={(value: string) =>
             setExpense({...expense, expenseWay: value})
           }
@@ -230,7 +249,9 @@ const AddExpense = observer(
           fontFamily={App.theme.primaryFont.MEDIUM}
           boxStyles={styles.boxStyles}
           search={false}
-          inputStyles={styles.inputStyles}
+          inputStyles={styles.inputTextStyles}
+          dropdownTextStyles={styles.dropDownTextStyles}
+          dropdownStyles={styles.dropDownStyles}
           setSelected={(value: string) =>
             setExpense({...expense, accountId: value})
           }

@@ -22,12 +22,15 @@ const AccountCard = observer(({account}: {account: AccountIF}) => {
     font-family: ${theme.primaryFont.MEDIUM};
   `;
   const AccountHeading = styled(TextBase)`
+    color: ${theme.primary2};
     font-size: 30px;
   `;
   const MinorHeading = styled(TextBase)`
+    color: ${theme.primary2};
     font-size: 20px;
   `;
   const ContentHeading = styled(TextBase)`
+    color: ${theme.primary2};
     font-size: 15px;
   `;
   const MoneyText = styled(TextBase)`
@@ -45,7 +48,9 @@ const AccountCard = observer(({account}: {account: AccountIF}) => {
       <MinorHeading>
         Available Balance
         {'\n'}
-        <MoneyText>₹&nbsp;{account.credit - account.debit}</MoneyText>
+        <MoneyText>
+          ₹&nbsp;{Number(account.credit) - Number(account.debit)}
+        </MoneyText>
       </MinorHeading>
 
       <MoneyContainer>

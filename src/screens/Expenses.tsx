@@ -7,10 +7,10 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import {observer} from 'mobx-react';
 import {MainContainer} from '../customComponents/styledComponents';
 import CustomExpense from '../customComponents/CustomExpense';
 import {App, ExpenseIF} from '../state/store';
-import {observer} from 'mobx-react';
 import FilterCard from '../customComponents/FilterCard';
 import AddExpense from './AddExpense';
 
@@ -120,6 +120,7 @@ const Expenses = observer(() => {
     },
     expensesContainer: {},
   });
+
   return (
     <MainContainer>
       <View style={styles.tabStyles}>
@@ -154,7 +155,11 @@ const Expenses = observer(() => {
         />
       </TouchableOpacity>
       <FilterCard filtersVisible={filtersVisible} />
-      <AddExpense expanded={addExpenseVisible} expenseVal={expenseToBeEdited} />
+      <AddExpense
+        expanded={addExpenseVisible}
+        expenseVal={expenseToBeEdited}
+        setExpanded={setAddExpenseVisible}
+      />
       <ScrollView style={styles.expensesContainer}>
         {App.expenses.map(expense => (
           <CustomExpense

@@ -20,13 +20,13 @@ const source = {
 
 const LoginScreen = observer(({navigation}: {navigation: any}) => {
   const [loginInfo, setLoginInfo] = React.useState({
-    userEmail: 'manav81101@gmail.com',
-    userPassword: 'bhumimanav1@',
+    userEmail: '',
+    userPassword: '',
   });
   const [signupInfo, setSignupInfo] = React.useState({
-    userEmail: 'manav81101@gmail.com',
-    userPassword: 'bhumimanav1@',
-    userName: 'manav1',
+    userEmail: '',
+    userPassword: '',
+    userName: '',
   });
 
   const [loginSignupVisibility, setLoginSignupVisibility] =

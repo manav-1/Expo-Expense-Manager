@@ -64,6 +64,7 @@ const AnalyticsScreen = observer(() => {
       textAlign: 'center',
       fontSize: 18,
       marginBottom: 5,
+      color: App.theme.primary,
     },
     lineChart: {width: '100%', height: 280},
     chartStyle: {marginLeft: -10, marginRight: 10},
@@ -166,7 +167,6 @@ const AnalyticsScreen = observer(() => {
       datasets,
       legends,
     };
-    console.log(data);
     return data;
   };
   const chartLabelValueSelector = [

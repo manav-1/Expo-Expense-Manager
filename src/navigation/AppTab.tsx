@@ -18,7 +18,6 @@ const HomeTabNavigation = observer(() => {
     <Tab.Navigator
       tabBarPosition="bottom"
       screenOptions={{
-        lazy: true,
         tabBarActiveTintColor: theme.primary,
         tabBarInactiveTintColor: theme.primary2,
         tabBarLabelStyle: {

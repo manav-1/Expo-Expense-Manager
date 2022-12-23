@@ -56,7 +56,7 @@ const FilterCard = ({filtersVisible}: {filtersVisible: boolean}) => {
   };
   const styles = StyleSheet.create({
     expenseFiltersContainer: {
-      backgroundColor: App.theme.accent,
+      backgroundColor: App.theme.background,
       borderRadius: 10,
       // @ts-ignore (these styles not applicable in stylesheet)
       maxHeight: height,
@@ -128,6 +128,9 @@ const FilterCard = ({filtersVisible}: {filtersVisible: boolean}) => {
     modalStyles: {
       height: '100%',
     },
+    inputStyles: {color: App.theme.primary},
+    dropDownTextStyles: {color: App.theme.secondary},
+    dropDownStyles: {backgroundColor: App.theme.primary},
   });
 
   React.useEffect(() => {
@@ -167,6 +170,9 @@ const FilterCard = ({filtersVisible}: {filtersVisible: boolean}) => {
           <MultipleSelectList
             fontFamily={App.theme.primaryFont.MEDIUM}
             boxStyles={styles.boxStyles}
+            inputStyles={styles.inputStyles}
+            dropdownTextStyles={styles.dropDownTextStyles}
+            dropdownStyles={styles.dropDownStyles}
             setSelected={setWays}
             defaultOption={options.expenseWay[0]}
             data={options.expenseWay}
@@ -181,6 +187,9 @@ const FilterCard = ({filtersVisible}: {filtersVisible: boolean}) => {
           <MultipleSelectList
             fontFamily={App.theme.primaryFont.MEDIUM}
             boxStyles={styles.boxStyles}
+            inputStyles={styles.inputStyles}
+            dropdownTextStyles={styles.dropDownTextStyles}
+            dropdownStyles={styles.dropDownStyles}
             setSelected={setTypes}
             defaultOption={options.expenseType[0]}
             data={options.expenseType}
@@ -195,6 +204,9 @@ const FilterCard = ({filtersVisible}: {filtersVisible: boolean}) => {
           <MultipleSelectList
             fontFamily={App.theme.primaryFont.MEDIUM}
             boxStyles={styles.boxStyles}
+            inputStyles={styles.inputStyles}
+            dropdownTextStyles={styles.dropDownTextStyles}
+            dropdownStyles={styles.dropDownStyles}
             setSelected={setAccounts}
             defaultOption={options.accountId[0]}
             data={options.accountId}

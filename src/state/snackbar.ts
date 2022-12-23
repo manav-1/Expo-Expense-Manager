@@ -1,4 +1,12 @@
 import {types} from 'mobx-state-tree';
+import {InterstitialAd} from 'react-native-google-mobile-ads';
+
+const INTERSTITIAL_AD_ID = 'ca-app-pub-3483658732327025/8677275257';
+
+const interstitial = InterstitialAd.createForAdRequest(INTERSTITIAL_AD_ID, {
+  requestNonPersonalizedAdsOnly: true,
+  keywords: ['finance', 'expense', 'stocks'],
+});
 
 const SnackBar = types
   .model('SnackBar', {
@@ -14,9 +22,13 @@ const SnackBar = types
     openSnackBar(message: string) {
       self.open = true;
       self.text = message;
+      interstitial.load();
     },
     closeSnackBar() {
-      self.open = false;
+      try {
+        self.open = false;
+        interstitial.show();
+      } catch (err) {}
     },
   }));
 

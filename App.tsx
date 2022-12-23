@@ -1,16 +1,19 @@
-import {StatusBar, Text, StyleSheet} from 'react-native';
+import {StatusBar, StyleSheet, Text} from 'react-native';
 import * as React from 'react';
-import {Provider} from 'react-native-paper';
+import {Provider, Snackbar} from 'react-native-paper';
 import {NavigationContainer} from '@react-navigation/native';
-import {Snackbar} from 'react-native-paper';
 import {observer} from 'mobx-react';
-import {loadAsync, unloadAllAsync} from 'expo-font';
+import {loadAsync} from 'expo-font';
 import StackNavigation from './src/navigation/HomeStack';
 import {App as AppStore} from './src/state/store';
 import {snackbar} from './src/state/snackbar';
+import 'expo-dev-client';
+import {BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
+import {TOP_BANNER_ID} from './src/state/store';
 
 const App = observer(() => {
   const [loaded, setLoaded] = React.useState(false);
+
   React.useEffect(() => {
     (async () => {
       await loadAsync({
@@ -36,11 +39,6 @@ const App = observer(() => {
       });
       setLoaded(true);
     })();
-    return () => {
-      // (async () => {
-      //   await unloadAllAsync();
-      // })();
-    };
   }, []);
 
   if (!loaded) return null;
@@ -55,6 +53,11 @@ const App = observer(() => {
 
   return (
     <Provider>
+      <BannerAd
+        unitId={TOP_BANNER_ID}
+        size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+        requestOptions={{requestNonPersonalizedAdsOnly: true}}
+      />
       <NavigationContainer>
         <StackNavigation />
         <StatusBar hidden />

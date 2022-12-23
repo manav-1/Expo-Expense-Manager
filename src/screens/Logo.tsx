@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {View, Text, StyleSheet, Image, Button} from 'react-native';
 import {Headline} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {App} from '../state/store';
@@ -15,6 +15,23 @@ const HomeScreen = observer(({navigation}: {navigation: any}) => {
   const logo = [Logo1, Logo2, Logo3, Logo4];
   const Logo = logo[Math.floor(Math.random() * logo.length)];
   const colors = App.theme;
+
+  React.useEffect(() => {
+    (async () => {
+      // await App.loadUser();
+      // await App.loadAccounts();
+      // await App.loadExpenses({take: 10});
+      // await App.loadNotes();
+
+      if (await AsyncStorage.getItem('expense_user')) {
+        navigation.push('HomeNav');
+      } else {
+        navigation.push('Login');
+      }
+    })();
+  }, [navigation]);
+  // No advert ready to show yet
+
   const styles = StyleSheet.create({
     textContainer: {
       flex: 1,
@@ -55,21 +72,7 @@ const HomeScreen = observer(({navigation}: {navigation: any}) => {
       fontSize: 26,
     },
   });
-  React.useEffect(() => {
-    const checkLoggedIn = async () => {
-      await App.loadUser();
-      await App.loadAccounts();
-      await App.loadExpenses({take: 10});
-      await App.loadNotes();
 
-      if (await AsyncStorage.getItem('expense_user')) {
-        navigation.push('HomeNav');
-      } else {
-        navigation.push('Login');
-      }
-    };
-    setTimeout(checkLoggedIn, 500);
-  }, [navigation]);
   return (
     <View style={[StyleSheet.absoluteFill, styles.textContainer]}>
       <Image

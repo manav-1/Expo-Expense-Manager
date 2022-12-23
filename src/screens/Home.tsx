@@ -136,6 +136,7 @@ const HomeScreen = observer(
         height: height,
         justifyContent: 'space-around',
         backgroundColor: App.theme.secondary + 'dd',
+        overflow: 'hidden',
       },
       addAccountHeading: {
         fontFamily: App.theme.primaryFont.MEDIUM,
@@ -170,7 +171,15 @@ const HomeScreen = observer(
             <TouchableOpacity
               activeOpacity={0.8}
               style={styles.addAccountButton}
-              onPress={() => setAddAccountButtonState(!addAccountButtonState)}>
+              onPress={() => {
+                setAddAccountButtonState(!addAccountButtonState);
+                setAccount({
+                  credit: '',
+                  debit: 0,
+                  userId: App.user.userId,
+                  accountLabel: '',
+                });
+              }}>
               <Text style={styles.addAccountText}>
                 Add Account/ Card <Ionicons name={'add'} size={15} />
               </Text>
@@ -186,14 +195,21 @@ const HomeScreen = observer(
           <View style={styles.containerOne}>
             <Text style={styles.addAccountHeading}>Add Account</Text>
             <TouchableOpacity
-              onPress={() =>
-                App.addAccount({
+              onPress={async () => {
+                await App.addAccount({
                   ...account,
                   credit: account.credit,
                   debit: '0',
                   userId: account.userId,
-                })
-              }
+                });
+                setAccount({
+                  credit: '',
+                  debit: 0,
+                  userId: App.user.userId,
+                  accountLabel: '',
+                });
+                setAddAccountButtonState(!addAccountButtonState);
+              }}
               activeOpacity={0.5}>
               <Ionicons
                 name={'save-outline'}

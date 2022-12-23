@@ -75,11 +75,9 @@ const secondaryFont = types.model('secondaryFont', {
 
 const Theme = types.model('Theme', {
   secondary: types.string,
-  secondary2: types.string,
   primary: types.string,
   primary2: types.string,
   accent: types.string,
-  accent2: types.string,
   background: types.string,
   background2: types.string,
   primaryFont: primaryFont,
@@ -144,100 +142,6 @@ const AppStore = types
       } catch (err) {
         snackbar.openSnackBar('Error loading user');
       }
-    },
-  }))
-  .actions(self => ({
-    async updateUser(user: any) {
-      try {
-        const token = await AsyncStorage.getItem('expense_user');
-        await ExpenseClient.patch(`user/profile/`, user, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        await App.loadUser();
-      } catch (err) {
-        snackbar.openSnackBar('Error updating user');
-      }
-    },
-    async login({
-      userEmail,
-      userPassword,
-    }: {
-      userEmail: string;
-      userPassword: string;
-    }) {
-      console.log('login called');
-
-      const validationSchema = yup.object().shape({
-        userEmail: yup.string().email('Must be a valid email').required(),
-        userPassword: yup
-          .string()
-          .min(8, 'At least 8 characters required')
-          .required(),
-      });
-      validationSchema
-        .validate({userEmail, userPassword})
-        .then(async () => {
-          try {
-            const {data} = await ExpenseClient.post('/auth/login', {
-              userEmail,
-              userPassword,
-            });
-            console.log(data);
-            if (data.token) {
-              console.log('Token', data.token);
-              await AsyncStorage.setItem('expense_user', data.token);
-              await self.loadUser();
-              snackbar.openSnackBar("You're Logged in");
-            }
-          } catch (err) {
-            console.log(err);
-          }
-        })
-        .catch(err => {
-          console.log(err);
-          snackbar.openSnackBar(err.errors.join(', '));
-        });
-    },
-    async signup({
-      userName,
-      userEmail,
-      userPassword,
-    }: {
-      userName: string;
-      userEmail: string;
-      userPassword: string;
-    }) {
-      console.log('signup called');
-      const validationSchema = yup.object().shape({
-        userEmail: yup.string().email('Must be a valid email').required(),
-        userPassword: yup
-          .string()
-          .min(8, 'At least 8 characters required')
-          .required(),
-        userName: yup.string().required(),
-      });
-      validationSchema
-        .validate({userEmail, userPassword, userName})
-        .then(async () => {
-          try {
-            const {data} = await ExpenseClient.post('/auth/signup', {
-              userEmail,
-              userPassword,
-              userName,
-            });
-            await AsyncStorage.setItem('expense_user', data.token);
-            await self.loadUser();
-            snackbar.openSnackBar("You're signed up");
-          } catch (err) {
-            console.log(err);
-          }
-        })
-        .catch(err => {
-          console.log(err);
-          snackbar.openSnackBar(err.errors.join(', '));
-        });
     },
   }))
   .actions(self => ({
@@ -450,18 +354,281 @@ const AppStore = types
     },
   }))
   .actions(self => ({
+    async updateUser(user: any) {
+      try {
+        const token = await AsyncStorage.getItem('expense_user');
+        await ExpenseClient.patch(`user/profile/`, user, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        await App.loadUser();
+      } catch (err) {
+        snackbar.openSnackBar('Error updating user');
+      }
+    },
+    async login({
+      userEmail,
+      userPassword,
+    }: {
+      userEmail: string;
+      userPassword: string;
+    }) {
+      console.log('login called');
+
+      const validationSchema = yup.object().shape({
+        userEmail: yup.string().email('Must be a valid email').required(),
+        userPassword: yup
+          .string()
+          .min(8, 'At least 8 characters required')
+          .required(),
+      });
+      validationSchema
+        .validate({userEmail, userPassword})
+        .then(async () => {
+          try {
+            const {data} = await ExpenseClient.post('/auth/login', {
+              userEmail,
+              userPassword,
+            });
+            console.log(data);
+            if (data.token) {
+              console.log('Token', data.token);
+              await AsyncStorage.setItem('expense_user', data.token);
+              await self.loadUser();
+              await self.loadAccounts();
+              await self.loadExpenses();
+              await self.loadNotes();
+              snackbar.openSnackBar("You're Logged in");
+            }
+          } catch (err) {
+            console.log(err);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          snackbar.openSnackBar(err.errors.join(', '));
+        });
+    },
+    async signup({
+      userName,
+      userEmail,
+      userPassword,
+    }: {
+      userName: string;
+      userEmail: string;
+      userPassword: string;
+    }) {
+      console.log('signup called');
+      const validationSchema = yup.object().shape({
+        userEmail: yup.string().email('Must be a valid email').required(),
+        userPassword: yup
+          .string()
+          .min(8, 'At least 8 characters required')
+          .required(),
+        userName: yup.string().required(),
+      });
+      validationSchema
+        .validate({userEmail, userPassword, userName})
+        .then(async () => {
+          try {
+            const {data} = await ExpenseClient.post('/auth/signup', {
+              userEmail,
+              userPassword,
+              userName,
+            });
+            await AsyncStorage.setItem('expense_user', data.token);
+            await self.loadUser();
+            await self.loadAccounts();
+            await self.loadExpenses();
+            await self.loadNotes();
+            snackbar.openSnackBar("You're signed up");
+          } catch (err) {
+            console.log(err);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          snackbar.openSnackBar(err.errors.join(', '));
+        });
+    },
+  }))
+  .actions(self => ({
     updateTheme: (theme: string) => self.setThemeType(theme),
   }));
 
 export const App = AppStore.create({
-  theme: themeDark,
-  themeType: 'dark',
-  expenses: [],
-  notes: [],
-  accounts: [],
-  user: {},
+  theme: themeLight,
+  themeType: 'light',
+  expenses: [
+    {
+      expenseId: '4',
+      createdAt: '2022-12-20T15:16:16.501Z',
+      updatedAt: '2022-12-20T15:16:16.501Z',
+      accountId: '1',
+      account: {
+        debit: '200',
+        credit: '3700',
+        accountLabel: 'manav1',
+        userId: '1',
+        accountId: '1',
+      },
+      expenseType: 'Credit',
+      value: 1200,
+      date: '2022-12-11T18:30:00.000Z',
+      description: 'trial',
+      expenseWay: 'Bank Transfer',
+    },
+    {
+      expenseId: '3',
+      createdAt: '2022-12-20T15:12:48.861Z',
+      updatedAt: '2022-12-20T15:12:48.861Z',
+      accountId: '1',
+      account: {
+        debit: '200',
+        credit: '3700',
+        accountLabel: 'manav1',
+        userId: '1',
+        accountId: '1',
+      },
+      expenseType: 'Debit',
+      value: 200,
+      date: '2022-12-20T15:12:29.592Z',
+      description: 'Expense 20',
+      expenseWay: 'UPI',
+    },
+    {
+      expenseId: '2',
+      createdAt: '2022-12-20T15:12:15.401Z',
+      updatedAt: '2022-12-20T15:12:15.401Z',
+      accountId: '2',
+      account: {
+        debit: '100',
+        credit: '90000',
+        accountLabel: 'SBI Account',
+        userId: '1',
+        accountId: '2',
+      },
+      expenseType: 'Debit',
+      value: 100,
+      date: '2022-12-20T15:11:55.318Z',
+      description: 'Expense',
+      expenseWay: 'Bank Transfer',
+    },
+    {
+      expenseId: '1',
+      createdAt: '2022-12-20T15:01:11.379Z',
+      updatedAt: '2022-12-20T15:01:11.379Z',
+      accountId: '1',
+      account: {
+        debit: '200',
+        credit: '3700',
+        accountLabel: 'manav1',
+        userId: '1',
+        accountId: '1',
+      },
+      expenseType: 'Credit',
+      value: 2500,
+      date: '2022-12-19T18:30:00.000Z',
+      description: 'Expense 1',
+      expenseWay: 'Debit Card',
+    },
+  ],
+  notes: [
+    {
+      noteId: '1',
+      noteText: 'New Note',
+      date: '2022-12-20T18:30:00.000Z',
+      createdAt: '2022-12-20T15:48:35.578Z',
+      updatedAt: '2022-12-20T15:48:35.578Z',
+      userId: '1',
+    },
+  ],
+  accounts: [
+    {
+      accountId: '1',
+      userId: '1',
+      debit: '200',
+      credit: '3700',
+      accountLabel: 'manav1',
+      expenses: [
+        {
+          expenseId: '1',
+          createdAt: '2022-12-20T15:01:11.379Z',
+          updatedAt: '2022-12-20T15:01:11.379Z',
+          accountId: '1',
+          account: null,
+          expenseType: 'Credit',
+          value: 2500,
+          date: '2022-12-19T18:30:00.000Z',
+          description: 'Expense 1',
+          expenseWay: 'Debit Card',
+        },
+        {
+          expenseId: '3',
+          createdAt: '2022-12-20T15:12:48.861Z',
+          updatedAt: '2022-12-20T15:12:48.861Z',
+          accountId: '1',
+          account: null,
+          expenseType: 'Debit',
+          value: 200,
+          date: '2022-12-20T15:12:29.592Z',
+          description: 'Expense 20',
+          expenseWay: 'UPI',
+        },
+        {
+          expenseId: '4',
+          createdAt: '2022-12-20T15:16:16.501Z',
+          updatedAt: '2022-12-20T15:16:16.501Z',
+          accountId: '1',
+          account: null,
+          expenseType: 'Credit',
+          value: 1200,
+          date: '2022-12-11T18:30:00.000Z',
+          description: 'trial',
+          expenseWay: 'Bank Transfer',
+        },
+      ],
+    },
+    {
+      accountId: '2',
+      userId: '1',
+      debit: '100',
+      credit: '90000',
+      accountLabel: 'SBI Account',
+      expenses: [
+        {
+          expenseId: '2',
+          createdAt: '2022-12-20T15:12:15.401Z',
+          updatedAt: '2022-12-20T15:12:15.401Z',
+          accountId: '2',
+          account: null,
+          expenseType: 'Debit',
+          value: 100,
+          date: '2022-12-20T15:11:55.318Z',
+          description: 'Expense',
+          expenseWay: 'Bank Transfer',
+        },
+      ],
+    },
+  ],
+  user: {
+    userId: '1',
+    userName: 'manav1',
+    userEmail: 'manav81101@gmail.com',
+    userProfilePic: null,
+    createdAt: '2022-12-20T14:57:46.603Z',
+    updatedAt: '2022-12-20T14:57:46.603Z',
+    expenseTypes: ['Credit', 'Debit'],
+    expenseWays: ['Cash', 'Bank Transfer', 'UPI', 'Debit Card', 'Credit Card'],
+  },
 });
 
 export default AppStore;
 
 export type {UserIF, ExpenseIF, NoteIF, AccountIF, ThemeIF};
+
+const TOP_BANNER_ID = 'ca-app-pub-3483658732327025/3423867009';
+const BOTTOM_BANNER_ID = 'ca-app-pub-3483658732327025/9033015392';
+
+export {TOP_BANNER_ID, BOTTOM_BANNER_ID};

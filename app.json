@@ -9,9 +9,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.manav1.ExpenseManager"
@@ -31,5 +29,8 @@
         "projectId": "e6ba40cb-dc82-4482-bb5b-d73bf0654bc6"
       }
     }
+  },
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-3483658732327025~6708150674"
   }
 }

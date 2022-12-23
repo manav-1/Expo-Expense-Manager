@@ -177,7 +177,7 @@ const Notes = observer(() => {
       <ScrollView>
         {notes?.map(note => (
           <CustomNote
-            key={String(note.noteId)}
+            key={note.noteId}
             note={note}
             deleteNote={() => App.deleteNote(Number(note.noteId))}
           />
