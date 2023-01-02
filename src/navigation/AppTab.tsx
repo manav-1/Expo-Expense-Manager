@@ -12,8 +12,16 @@ import {observer} from 'mobx-react';
 
 const Tab = createMaterialTopTabNavigator();
 
-const HomeTabNavigation = observer(() => {
+const HomeTabNavigation = observer(({navigation}: {navigation: any}) => {
   const theme = App.theme;
+
+  React.useEffect(() => {
+    (() => {
+      navigation.addListener('beforeRemove', (e: {preventDefault: () => any}) =>
+        e.preventDefault(),
+      );
+    })();
+  }, [navigation]);
   return (
     <Tab.Navigator
       tabBarPosition="bottom"

@@ -3,10 +3,11 @@ import {createStackNavigator} from '@react-navigation/stack';
 import LoginScreen from '../screens/Login';
 import LogoScreen from '../screens/Logo';
 import AppTab from './AppTab';
+import {observer} from 'mobx-react';
 
 const Stack = createStackNavigator();
 
-const StackNavigation = () => {
+const StackNavigation = observer(() => {
   return (
     <Stack.Navigator initialRouteName="Logo">
       <Stack.Screen
@@ -26,6 +27,6 @@ const StackNavigation = () => {
       />
     </Stack.Navigator>
   );
-};
+});
 
 export default StackNavigation;

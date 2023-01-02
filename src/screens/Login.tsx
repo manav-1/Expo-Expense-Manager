@@ -6,7 +6,6 @@ import {
   Text,
   TextInput,
   GestureResponderEvent,
-  KeyboardTypeOptions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {observer} from 'mobx-react';
