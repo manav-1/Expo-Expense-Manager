@@ -1,7 +1,7 @@
 import {types} from 'mobx-state-tree';
 import {InterstitialAd} from 'react-native-google-mobile-ads';
 
-const INTERSTITIAL_AD_ID = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+const INTERSTITIAL_AD_ID = 'xx-xxx-xxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
 
 const interstitial = InterstitialAd.createForAdRequest(INTERSTITIAL_AD_ID, {
   requestNonPersonalizedAdsOnly: true,
@@ -27,7 +27,12 @@ const SnackBar = types
     closeSnackBar() {
       try {
         self.open = false;
-        interstitial.show();
+        // Random Chance to show an add, on closing the snackbar
+        if (Math.random() <= 0.5)
+          interstitial
+            .show()
+            .then(() => console.log('Ad shown'))
+            .catch(() => console.log('Ad not Shown'));
       } catch (err) {}
     },
   }));

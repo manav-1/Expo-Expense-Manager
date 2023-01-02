@@ -6,6 +6,7 @@ import {
   Text,
   TextInput,
   GestureResponderEvent,
+  KeyboardTypeOptions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {observer} from 'mobx-react';
@@ -97,14 +98,14 @@ const LoginScreen = observer(({navigation}: {navigation: any}) => {
       // @ts-ignore animated height styles
       maxHeight: loginHeight,
       overflow: 'hidden',
-      backgroundColor: App.theme.secondary + 'dd',
+      backgroundColor: App.theme.primary + 'dd',
       width: 350,
     },
     signupContainer: {
       // @ts-ignore animated height styles
       maxHeight: signupHeight,
       overflow: 'hidden',
-      backgroundColor: App.theme.background + 'dd',
+      backgroundColor: App.theme.primary + 'dd',
       width: 350,
     },
     changeButtonStyle: {
@@ -136,7 +137,7 @@ const LoginScreen = observer(({navigation}: {navigation: any}) => {
     heading: {
       fontFamily: App.theme.primaryFont.BOLD,
       fontSize: 22,
-      color: App.theme.primary,
+      color: App.theme.secondary,
     },
     containerPadding: {
       paddingVertical: 5,
@@ -152,7 +153,7 @@ const LoginScreen = observer(({navigation}: {navigation: any}) => {
       alignItems: 'center',
       paddingHorizontal: 10,
       height: 50,
-      backgroundColor: App.theme.secondary + 'dd',
+      backgroundColor: App.theme.primary + 'dd',
       justifyContent: 'space-between',
       margin: 10,
       borderRadius: 5,
@@ -184,37 +185,44 @@ const LoginScreen = observer(({navigation}: {navigation: any}) => {
   const loginInputs: {
     heading: string;
     placeholder: string;
+    secret: boolean;
     variableSelector: keyof typeof loginInfo;
   }[] = [
     {
       heading: 'Email',
       placeholder: 'Enter your email',
+      secret: false,
       variableSelector: 'userEmail',
     },
     {
       heading: 'Password',
       placeholder: 'Enter your password',
+      secret: true,
       variableSelector: 'userPassword',
     },
   ];
   const signUpInputs: {
     heading: string;
     placeholder: string;
+    secret: boolean;
     variableSelector: keyof typeof signupInfo;
   }[] = [
     {
       heading: 'Username',
       placeholder: 'Enter your username',
+      secret: false,
       variableSelector: 'userName',
     },
     {
       heading: 'Email',
       placeholder: 'Enter your email',
+      secret: false,
       variableSelector: 'userEmail',
     },
     {
       heading: 'Password',
       placeholder: 'Enter your password',
+      secret: true,
       variableSelector: 'userPassword',
     },
   ];
@@ -230,10 +238,7 @@ const LoginScreen = observer(({navigation}: {navigation: any}) => {
     {
       heading: 'Login',
       onPress: async () => {
-        try {
-          await App.login(loginInfo);
-          navigation.push('HomeNav');
-        } catch (err) {}
+        await App.login(loginInfo, navigation);
       },
       textInputs: loginInputs,
       styles: 'loginContainer',
@@ -244,10 +249,7 @@ const LoginScreen = observer(({navigation}: {navigation: any}) => {
     {
       heading: 'Signup',
       onPress: async () => {
-        try {
-          await App.signup(signupInfo);
-          navigation.push('HomeNav');
-        } catch (err) {}
+        await App.signup(signupInfo, navigation);
       },
       textInputs: signUpInputs,
       styles: 'signupContainer',
@@ -275,6 +277,7 @@ const LoginScreen = observer(({navigation}: {navigation: any}) => {
                   <TextInput
                     style={styles.input}
                     placeholder={textInput.placeholder}
+                    secureTextEntry={textInput.secret}
                     value={input.variables[textInput.variableSelector]}
                     onChangeText={val =>
                       input.onChangeFunction(val, textInput.variableSelector)
@@ -294,7 +297,7 @@ const LoginScreen = observer(({navigation}: {navigation: any}) => {
           <Text style={styles.changeButtonText}>
             {loginSignupVisibility
               ? "Don't have an account?"
-              : 'Already a customer?'}
+              : 'Already have an account?'}
             &nbsp;&nbsp;
           </Text>
           <TouchableOpacity

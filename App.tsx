@@ -38,7 +38,8 @@ const App = observer(() => {
         'SpaceGrotesk-Light': require('./assets/fonts/spaceGrotesk/SpaceGrotesk-Light.ttf'),
         'SpaceGrotesk-Regular': require('./assets/fonts/spaceGrotesk/SpaceGrotesk-Regular.ttf'),
       });
-      AppStore.updateTheme(await AsyncStorage.getItem('theme'));
+      const currentTheme = await AsyncStorage.getItem('expense_theme');
+      currentTheme ? await AppStore.setTheme('dark') : null;
       setLoaded(true);
     })();
   }, []);

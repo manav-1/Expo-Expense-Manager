@@ -18,12 +18,11 @@ const HomeScreen = observer(({navigation}: {navigation: any}) => {
 
   React.useEffect(() => {
     (async () => {
-      // await App.loadUser();
-      // await App.loadAccounts();
-      // await App.loadExpenses({take: 10});
-      // await App.loadNotes();
-
       if (await AsyncStorage.getItem('expense_user')) {
+        await App.loadUser();
+        await App.loadAccounts();
+        await App.loadExpenses({take: 10});
+        await App.loadNotes();
         navigation.push('HomeNav');
       } else {
         navigation.push('Login');

@@ -4,6 +4,7 @@ import * as yup from 'yup';
 import {ExpenseClient} from '../axios/client';
 import {snackbar} from './snackbar';
 import {themeDark, themeLight} from './theme';
+import {StackNavigationHelpers} from '@react-navigation/stack/lib/typescript/src/types';
 
 const Expense = types.model('Expense', {
   expenseId: types.optional(types.identifier, '0'),
@@ -121,18 +122,19 @@ const AppStore = types
     setAccounts(accounts: any) {
       self.accounts = accounts;
     },
+    setTheme(theme: any) {
+      self.theme = theme;
+    },
     setThemeType(themeType: string) {
       self.themeType = themeType;
       this.setTheme(themeType === 'dark' ? themeDark : themeLight);
-    },
-    setTheme(theme: any) {
-      self.theme = theme;
     },
   }))
   .actions(self => ({
     async loadUser() {
       try {
         const token = await AsyncStorage.getItem('expense_user');
+        console.log(token);
         const {data} = await ExpenseClient.get('user/profile', {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -166,7 +168,7 @@ const AppStore = types
         });
         self.setExpenses(data.expenses);
       } catch (err) {
-        snackbar.openSnackBar('Something went wrong');
+        snackbar.openSnackBar('Something went wrong while loading expenses');
       }
     },
   }))
@@ -181,8 +183,8 @@ const AppStore = types
         });
         self.setAccounts(data.accounts);
       } catch (err) {
-        console.log('err', err);
-        snackbar.openSnackBar('Something went wrong');
+        console.log(err);
+        snackbar.openSnackBar('Something went wrong while loading accounts');
       }
     },
   }))
@@ -201,8 +203,7 @@ const AppStore = types
         });
         self.setNotes(data.notes);
       } catch (err) {
-        console.log(err);
-        snackbar.openSnackBar('Something went wrong');
+        snackbar.openSnackBar('Something went wrong while loading notes');
       }
     },
   }))
@@ -219,7 +220,7 @@ const AppStore = types
         self.loadExpenses();
         self.loadAccounts();
       } catch (err) {
-        snackbar.openSnackBar('Something went wrong');
+        snackbar.openSnackBar('Something went wrong adding expense');
       }
     },
     async updateExpense(expense: ExpenseIF, expenseId: string) {
@@ -239,7 +240,7 @@ const AppStore = types
         self.loadExpenses();
         self.loadAccounts();
       } catch (err) {
-        snackbar.openSnackBar('Something went wrong');
+        snackbar.openSnackBar('Something went wrong updating expense');
       }
     },
     async deleteExpense(expenseId: string) {
@@ -254,7 +255,7 @@ const AppStore = types
         self.loadExpenses();
         self.loadAccounts();
       } catch (err) {
-        snackbar.openSnackBar('Something went wrong');
+        snackbar.openSnackBar('Something went wrong deleting expense');
       }
     },
   }))
@@ -270,8 +271,7 @@ const AppStore = types
         if (data) snackbar.openSnackBar('Added successfully');
         self.loadAccounts();
       } catch (err) {
-        console.log('err', err);
-        snackbar.openSnackBar('Something went wrong');
+        snackbar.openSnackBar('Something went wrong adding account');
       }
     },
     async updateAccount(account: AccountIF, accountId: string) {
@@ -289,7 +289,7 @@ const AppStore = types
         if (data) snackbar.openSnackBar('Updated successfully');
         self.loadAccounts();
       } catch (err) {
-        snackbar.openSnackBar('Something went wrong');
+        snackbar.openSnackBar('Something went wrong with updating account');
       }
     },
     async deleteAccount(accountId: string) {
@@ -303,7 +303,7 @@ const AppStore = types
         if (data) snackbar.openSnackBar('Deleted successfully');
         self.loadAccounts();
       } catch (err) {
-        snackbar.openSnackBar('Something went wrong');
+        snackbar.openSnackBar('Something went wrong with deleting account');
       }
     },
   }))
@@ -320,7 +320,7 @@ const AppStore = types
         if (data.success) snackbar.openSnackBar('Added successfully');
         self.loadNotes();
       } catch (err) {
-        snackbar.openSnackBar('Something went wrong');
+        snackbar.openSnackBar('Something went wrong in adding note');
       }
     },
     async updateNote(note: any, noteId: number) {
@@ -334,7 +334,7 @@ const AppStore = types
         if (data) snackbar.openSnackBar('Updated successfully');
         self.loadNotes();
       } catch (err) {
-        snackbar.openSnackBar('Something went wrong');
+        snackbar.openSnackBar('Something went wrong in updating note');
       }
     },
     async deleteNote(noteId: number) {
@@ -348,8 +348,7 @@ const AppStore = types
         if (data.message) snackbar.openSnackBar('Deleted successfully');
         self.loadNotes();
       } catch (err) {
-        console.log(err);
-        snackbar.openSnackBar('Something went wrong');
+        snackbar.openSnackBar('Something went wrong in deleting note');
       }
     },
   }))
@@ -364,16 +363,19 @@ const AppStore = types
         });
         await App.loadUser();
       } catch (err) {
-        snackbar.openSnackBar('Error updating user');
+        snackbar.openSnackBar('Error updating user ');
       }
     },
-    async login({
-      userEmail,
-      userPassword,
-    }: {
-      userEmail: string;
-      userPassword: string;
-    }) {
+    async login(
+      {
+        userEmail,
+        userPassword,
+      }: {
+        userEmail: string;
+        userPassword: string;
+      },
+      navigation: StackNavigationHelpers,
+    ) {
       console.log('login called');
 
       const validationSchema = yup.object().shape({
@@ -386,39 +388,46 @@ const AppStore = types
       validationSchema
         .validate({userEmail, userPassword})
         .then(async () => {
-          try {
-            const {data} = await ExpenseClient.post('/auth/login', {
-              userEmail,
-              userPassword,
-            });
-            console.log(data);
-            if (data.token) {
-              console.log('Token', data.token);
-              await AsyncStorage.setItem('expense_user', data.token);
-              await self.loadUser();
-              await self.loadAccounts();
-              await self.loadExpenses();
-              await self.loadNotes();
-              snackbar.openSnackBar("You're Logged in");
-            }
-          } catch (err) {
-            console.log(err);
+          console.log(userEmail, userPassword);
+          const {data} = await ExpenseClient.post('/auth/login', {
+            userEmail,
+            userPassword,
+          });
+          console.log(data);
+          if (data && data.token) {
+            console.log('Token', data.token);
+            await AsyncStorage.setItem('expense_user', data.token);
+            await self.loadUser();
+            await self.loadAccounts();
+            await self.loadExpenses();
+            await self.loadNotes();
+            navigation.navigate('HomeNav');
+            snackbar.openSnackBar("You're Logged in");
           }
         })
         .catch(err => {
-          console.log(err);
-          snackbar.openSnackBar(err.errors.join(', '));
+          // for validation errors
+          if (err.errors) snackbar.openSnackBar(err.errors.join(', '));
+          else {
+            const e = JSON.parse(JSON.stringify(err));
+            if (e.code === 'ERR_BAD_RESPONSE' || e.code === 'E')
+              snackbar.openSnackBar("Username or password doesn't match");
+            else snackbar.openSnackBar("Something went wrong, can't login");
+          }
         });
     },
-    async signup({
-      userName,
-      userEmail,
-      userPassword,
-    }: {
-      userName: string;
-      userEmail: string;
-      userPassword: string;
-    }) {
+    async signup(
+      {
+        userName,
+        userEmail,
+        userPassword,
+      }: {
+        userName: string;
+        userEmail: string;
+        userPassword: string;
+      },
+      navigation: StackNavigationHelpers,
+    ) {
       console.log('signup called');
       const validationSchema = yup.object().shape({
         userEmail: yup.string().email('Must be a valid email').required(),
@@ -431,25 +440,27 @@ const AppStore = types
       validationSchema
         .validate({userEmail, userPassword, userName})
         .then(async () => {
-          try {
-            const {data} = await ExpenseClient.post('/auth/signup', {
-              userEmail,
-              userPassword,
-              userName,
-            });
-            await AsyncStorage.setItem('expense_user', data.token);
-            await self.loadUser();
-            await self.loadAccounts();
-            await self.loadExpenses();
-            await self.loadNotes();
-            snackbar.openSnackBar("You're signed up");
-          } catch (err) {
-            console.log(err);
-          }
+          const {data} = await ExpenseClient.post('/auth/signup', {
+            userEmail,
+            userPassword,
+            userName,
+          });
+          await AsyncStorage.setItem('expense_user', data.token);
+          await self.loadUser();
+          await self.loadAccounts();
+          await self.loadExpenses();
+          await self.loadNotes();
+          navigation.navigate('HomeNav');
+          snackbar.openSnackBar("You're signed up");
         })
         .catch(err => {
-          console.log(err);
-          snackbar.openSnackBar(err.errors.join(', '));
+          if (err.errors) snackbar.openSnackBar(err.errors.join(', '));
+          else {
+            const e = JSON.parse(JSON.stringify(err));
+            if (e.code === 'ERR_BAD_RESPONSE' || e.code === 'E')
+              snackbar.openSnackBar("Username or password doesn't match");
+            else snackbar.openSnackBar("Something went wrong, can't login");
+          }
         });
     },
   }))
@@ -473,7 +484,7 @@ export default AppStore;
 
 export type {UserIF, ExpenseIF, NoteIF, AccountIF, ThemeIF};
 
-const TOP_BANNER_ID = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
-const BOTTOM_BANNER_ID = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+const TOP_BANNER_ID = 'xx-xxx-xxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+const BOTTOM_BANNER_ID = 'xx-xxx-xxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
 
 export {TOP_BANNER_ID, BOTTOM_BANNER_ID};

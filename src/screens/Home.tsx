@@ -147,6 +147,7 @@ const HomeScreen = observer(
     });
     const userLogout = async () => {
       await AsyncStorage.removeItem('expense_user');
+      await AsyncStorage.removeItem('expense_theme');
       navigation.navigate('Login');
     };
     return (
