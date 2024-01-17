@@ -484,7 +484,7 @@ export default AppStore;
 
 export type {UserIF, ExpenseIF, NoteIF, AccountIF, ThemeIF};
 
-const TOP_BANNER_ID = 'xx-xxx-xxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
-const BOTTOM_BANNER_ID = 'xx-xxx-xxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+const TOP_BANNER_ID = 'ca-app-pub-3483658732327025/4098863851';
+const BOTTOM_BANNER_ID = 'ca-app-pub-3483658732327025/9335960239';
 
 export {TOP_BANNER_ID, BOTTOM_BANNER_ID};
